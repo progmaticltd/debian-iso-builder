@@ -1,0 +1,6 @@
+---
+
+# Default variables to build the ISO image
+
+# Temporary directory
+build_dir: '/tmp/build-{{ system.hostname }}'

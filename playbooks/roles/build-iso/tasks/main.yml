@@ -1,0 +1,57 @@
+---
+
+- name: 'Create the working directory in {{ build_dir }}'
+  tags: preseed
+  file:
+    path: '{{ build_dir }}'
+    state: directory
+
+- name: Copy the configuration file for {{ system.hostname }}
+  tags: preseed
+  template:
+    src: common.conf
+    dest: '{{ build_dir }}/common.conf'
+
+- name: Copy the build script
+  tags: preseed
+  template:
+    src: '{{ file }}'
+    dest: '{{ build_dir }}/{{ file }}'
+    mode: 0744
+  with_items:
+    - build-mirror.sh
+    - build-cd.sh
+  loop_control:
+    loop_var: file
+
+- name: Create the profile folder
+  tags: preseed
+  file:
+    path: '{{ build_dir }}/profiles'
+    state: directory
+
+- name: Copy the profile folder content
+  tags: preseed
+  template:
+    src: 'profiles/{{ system.preseed }}/{{ file }}'
+    dest: '{{ build_dir }}/profiles/{{ file }}'
+  with_items:
+    - default.description
+    - default.packages
+    - default.postinst
+    - default.preseed
+  loop_control:
+    loop_var: file
+
+- name: Copy the miscellaneous files that need to be on the CD/DVD image
+  tags: preseed
+  copy:
+    src: '{{ playbook_dir }}/../misc'
+    dest: '{{ build_dir }}'
+
+- name: Create a symbolic link for the build directory
+  when: system.hostname != 'homebox'
+  file:
+    src: '{{ build_dir }}'
+    dest: '/tmp/build-homebox'
+    state: link
