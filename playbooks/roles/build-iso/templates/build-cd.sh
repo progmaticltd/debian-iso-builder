@@ -30,8 +30,13 @@ tar c -C "{{ playbook_dir }}/../misc" \
     --group=root --owner=root \
     -z -f "{{ build_dir }}/misc.tgz" .
 
-# Build installer CDs for the whole platform
+{% if debug %}
+BUILD_OPTIONS="--debug"
+{% else %}
 BUILD_OPTIONS="--verbose"
+{% endif %}
+
+# Build installer CDs for the whole platform
 BUILD_OPTIONS+=" --build-only ${COMMON_OPTS}"
 BUILD_OPTIONS+=" --conf common.conf"
 

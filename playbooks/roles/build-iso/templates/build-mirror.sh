@@ -19,11 +19,15 @@ LOCALE='{{ locale.id }}'
 # Build the default mirror URL
 MIRROR='http://{{ repo.main }}/debian/'
 
-# Common options
-COMMON_OPTS="--debian-mirror ${MIRROR} --locale ${LOCALE} --dist ${DIST} --debug"
-
 # Build the mirror repositories option
-export MIRROR_OPTIONS="--do-mirror ${COMMON_OPTS} --mirror-only"
+MIRROR_OPTIONS="--do-mirror ${COMMON_OPTS} --mirror-only"
+
+{% if debug %}
+MIRROR_OPTIONS="$MIRROR_OPTIONS --debug"
+{% else %}
+MIRROR_OPTIONS="$MIRROR_OPTIONS --verbose"
+{% endif %}
 
 # Build the mirror
 simple-cdd $MIRROR_OPTIONS
+

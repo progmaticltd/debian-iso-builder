@@ -14,11 +14,14 @@ RUN useradd -ms /bin/dash cdbuild
 RUN mkdir -p /home/cdbuild/misc/root/.ssh
 COPY --chown=cdbuild:cdbuild ./config/authorized_keys /home/cdbuild/misc/root/.ssh/authorized_keys
 
-# Install the last version of simple-cdd
-RUN apt -qq install -t stretch-backports -y simple-cdd
+# Install the last version of simple-cdd and debian keyrings
+RUN apt -qq install -t stretch-backports -y simple-cdd debian-archive-keyring
 
 # Install the last version of ansible to build the preseed file
 RUN apt -qq install -t stretch-backports -y ansible
+
+# Remove expired keys from Debian keyring
+RUN apt-key --keyring /usr/share/keyrings/debian-archive-keyring.gpg del ED6D65271AACF0FF15D123036FB2A1C265FFB764
 
 # Copy the miscellaneous files to be part of the CD image
 # but remove the doc file
@@ -49,7 +52,7 @@ RUN cd /tmp/build-homebox && ./build-mirror.sh
 RUN cd /tmp/build-homebox && ./build-cd.sh
 
 # Copy the final ISO image into the host shared folder
-ENTRYPOINT cp /tmp/build-homebox/images/*.iso /tmp/homebox-images/
+# ENTRYPOINT cp /tmp/debian-images/*.iso /tmp/homebox-images/
 
 # For debugging
-ENTRYPOINT /bin/bash
+# ENTRYPOINT /bin/bash

@@ -8,18 +8,19 @@
 docker-compose build cdbuild
 
 # Create the temporary folder that will contains the ISO image for the installer
-test -d /tmp/homebox-images || mkdir /tmp/homebox-images
+test -d /tmp/debian-images || mkdir /tmp/debian-images
 
 # If your user ID is different from 1000, make sure the group 1000 can create this file:
-chgrp 1000 /tmp/homebox-images
-chmod g+wx /tmp/homebox-images
+mygroup=$(groups | cut -d ' ' -f 1)
+chgrp "$mygroup" /tmp/debian-images
+chmod g+wx /tmp/debian-images
 
 # Run the docker container, that will do the following:
 # 1 - Install the latest version of Ansible
 # 2 - Run the Ansible playbook to create simple-cdd configuration
 # 3 - Run simple-cdd to create custom iso image installer
 docker run \
-       --mount type=bind,source=/tmp/homebox-images,target=/tmp/homebox-images \
-       cdbuild:latest || exit 1
+    --mount type=bind,source=/tmp/debian-images,target=/tmp/debian-images \
+    cdbuild:latest || exit 1
 
 # TODO: Move the installer to the backup folder, with a proper name
