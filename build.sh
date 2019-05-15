@@ -15,12 +15,18 @@ mygroup=$(groups | cut -d ' ' -f 1)
 chgrp "$mygroup" /tmp/debian-images
 chmod g+wx /tmp/debian-images
 
+# Set shared directories
+host_dir="/tmp/debian-images"
+test -d "$host_dir" || mkdir "$host_dir"
+
+# Mount options for Docker
+test -d /tmp/debian-images/isos || mkdir /tmp/debian-images/isos
+mountOptions='--volume /tmp/debian-images:/tmp/debian-images'
+
 # Run the docker container, that will do the following:
 # 1 - Install the latest version of Ansible
 # 2 - Run the Ansible playbook to create simple-cdd configuration
 # 3 - Run simple-cdd to create custom iso image installer
-docker run \
-    --mount type=bind,source=/tmp/debian-images,target=/tmp/debian-images \
-    cdbuild:latest || exit 1
+docker run -i $mountOptions cdbuild:latest || exit 1
 
-# TODO: Move the installer to the backup folder, with a proper name
+

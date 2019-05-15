@@ -49,5 +49,8 @@ test -d "{{ build_dir }}/logs" || mkdir "{{ build_dir }}/logs"
 
 BUILD_OPTIONS+=" --logfile ${LOGFILE}"
 
+# Build the directory to store the images
+mkdir ~/debian-images
+
 # Run the program to build the images
 simple-cdd $BUILD_OPTIONS

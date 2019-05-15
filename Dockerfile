@@ -51,8 +51,13 @@ RUN cd /tmp/build-homebox && ./build-mirror.sh
 # And build the CD image
 RUN cd /tmp/build-homebox && ./build-cd.sh
 
-# Copy the final ISO image into the host shared folder
-# ENTRYPOINT cp /tmp/debian-images/*.iso /tmp/homebox-images/
 
-# For debugging
-# ENTRYPOINT /bin/bash
+# The ISO image is in this folder, but copying to the host
+# seems unstable and problematic
+RUN md5sum /home/cdbuild/debian-images/*iso
+
+RUN test -d /tmp/debian-images/ || mkdir /tmp/debian-images/
+RUN test -d /tmp/debian-images/isos || mkdir /tmp/debian-images/isos/
+
+ENTRYPOINT cp /home/cdbuild/debian-images/* /tmp/debian-images/isos/
+
