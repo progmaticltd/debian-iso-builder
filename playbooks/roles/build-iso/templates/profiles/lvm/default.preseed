@@ -24,6 +24,11 @@ d-i partman-auto/method string lvm
 # warning. This can be preseeded away...
 d-i partman-lvm/device_remove_lvm boolean true
 
+# You can define the amount of space that will be used for the LVM volume
+# group. It can either be a size with its unit (eg. 20 GB), a percentage of
+# free space or the 'max' keyword.
+d-i partman-auto-lvm/guided_size string max
+
 # The same applies to pre-existing software RAID array:
 d-i partman-md/device_remove_md boolean true
 
