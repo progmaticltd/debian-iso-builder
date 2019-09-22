@@ -1,8 +1,8 @@
-# Start from Debian stable (Stretch)
+# Start from Debian stable (Buster)
 FROM debian:stable
 
 # Add backports repository
-RUN echo 'deb http://deb.debian.org/debian/ stretch-backports main contrib non-free' >>/etc/apt/sources.list
+RUN echo 'deb http://deb.debian.org/debian/ buster-backports main contrib non-free' >>/etc/apt/sources.list
 
 # Install the required package
 RUN apt -qq update
@@ -14,14 +14,26 @@ RUN useradd -ms /bin/dash cdbuild
 RUN mkdir -p /home/cdbuild/misc/root/.ssh
 COPY --chown=cdbuild:cdbuild ./config/authorized_keys /home/cdbuild/misc/root/.ssh/authorized_keys
 
-# Install the last version of simple-cdd and debian keyrings
-RUN apt -qq install -t stretch-backports -y simple-cdd debian-archive-keyring
+# Display available disk space
+RUN df -h
 
 # Install the last version of ansible to build the preseed file
-RUN apt -qq install -t stretch-backports -y ansible
+RUN apt-get -qq install -y ansible
+RUN apt-get clean
+
+RUN apt-get -qq install -y debian-archive-keyring
+RUN apt-get clean
+
+# Install the last version of simple-cdd and debian keyrings
+RUN apt-get -q install -y simple-cdd
+RUN apt-get clean
+
+# Install the last version of simple-cdd and debian keyrings
+RUN apt-get -q install -y python
+RUN apt-get clean
 
 # Remove expired keys from Debian keyring
-RUN apt-key --keyring /usr/share/keyrings/debian-archive-keyring.gpg del ED6D65271AACF0FF15D123036FB2A1C265FFB764
+# RUN apt-key --keyring /usr/share/keyrings/debian-archive-keyring.gpg del ED6D65271AACF0FF15D123036FB2A1C265FFB764
 
 # Copy the miscellaneous files to be part of the CD image
 # but remove the doc file
@@ -60,4 +72,3 @@ RUN test -d /tmp/debian-images/ || mkdir /tmp/debian-images/
 RUN test -d /tmp/debian-images/isos || mkdir /tmp/debian-images/isos/
 
 ENTRYPOINT cp /home/cdbuild/debian-images/* /tmp/debian-images/isos/
-

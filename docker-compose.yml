@@ -1,8 +1,11 @@
 ---
 
-version: '2'
+version: '3.5'
 
 services:
   cdbuild:
-    build: .
+    build:
+      context: .
+      shm_size: 1gb
+    shm_size: 1gb
     image: cdbuild:latest
